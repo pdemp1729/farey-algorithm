@@ -10,7 +10,7 @@ def farey_add(x: Rational, y: Rational) -> Rational:
 
 
 def find_rational_approximation(x, places=7):
-    """ Find a rational approximation of x to the specified number of decimal places.
+    """Find a rational approximation of x to the specified number of decimal places.
 
     We use an algorithm based on the Farey sequence, which consists of all completely
     reduced fractions between 0 and 1. This ensures that the rational approximation

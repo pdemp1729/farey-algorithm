@@ -2,7 +2,7 @@ import math
 
 
 class Rational:
-    """ Data structure representing a rational number.
+    """Data structure representing a rational number.
 
     We store a rational number as a tuple of integers (one unsigned, one positive)
     representing the numerator and denominator of the corresponding fraction.
@@ -10,6 +10,7 @@ class Rational:
     >>> Rational(1, 2)
     1/2
     """
+
     def __init__(self, numerator, denominator):
         assert denominator > 0
         self.numerator = numerator
@@ -42,7 +43,7 @@ class Rational:
         return simplify(self)
 
     def __add__(self, other):
-        """ Addition has the following properties:
+        """Addition has the following properties:
         - Rational + Rational -> Rational
         - Rational + int -> Rational
         - Rational + float -> float
@@ -57,7 +58,7 @@ class Rational:
         if isinstance(other, Rational):
             return Rational(
                 self.numerator * other.denominator + self.denominator * other.numerator,
-                self.denominator * other.denominator
+                self.denominator * other.denominator,
             )
         elif isinstance(other, int):
             return Rational(self.numerator + other * self.denominator, self.denominator)
@@ -76,7 +77,7 @@ class Rational:
         return other + -self
 
     def __mul__(self, other):
-        """ Multiplication has the following properties:
+        """Multiplication has the following properties:
         - Rational * Rational -> Rational
         - Rational * int -> Rational
         - Rational * float -> float
@@ -90,8 +91,7 @@ class Rational:
         """
         if isinstance(other, Rational):
             return Rational(
-                self.numerator * other.numerator,
-                self.denominator * other.denominator
+                self.numerator * other.numerator, self.denominator * other.denominator
             )
         elif isinstance(other, int):
             return Rational(self.numerator * other, self.denominator)
@@ -104,7 +104,7 @@ class Rational:
         return self * other
 
     def __truediv__(self, other):
-        """ Division has the following properties:
+        """Division has the following properties:
         - Rational / (non-zero) Rational -> Rational
         - Rational / (non-zero) int -> Rational
         - Rational / (non-zero) float -> float
@@ -121,7 +121,10 @@ class Rational:
             elif other.is_negative:
                 return -self / abs(other)
             else:
-                return Rational(self.numerator * other.denominator, self.denominator * other.numerator)
+                return Rational(
+                    self.numerator * other.denominator,
+                    self.denominator * other.numerator,
+                )
         elif isinstance(other, int):
             if other == 0:
                 raise ZeroDivisionError
@@ -146,7 +149,7 @@ class Rational:
             return pow(float(self), power, modulo)
 
     def __eq__(self, other):
-        """ Two rational numbers are considered equal if they have the same numerator and denominator.
+        """Two rational numbers are considered equal if they have the same numerator and denominator.
 
         >>> Rational(1, 2) == Rational(1, 2)
         True
@@ -155,10 +158,12 @@ class Rational:
         """
         if not isinstance(other, Rational):
             return False
-        return self.denominator == other.denominator and self.numerator == other.numerator
+        return (
+            self.denominator == other.denominator and self.numerator == other.numerator
+        )
 
     def __lt__(self, other):
-        """ Ordering of rational numbers is implemented using their float representations.
+        """Ordering of rational numbers is implemented using their float representations.
 
         >>> Rational(1, 2) < Rational(3, 4)
         True
@@ -169,7 +174,7 @@ class Rational:
             return
 
     def __gt__(self, other):
-        """ Ordering of rational numbers is implemented using their float representations.
+        """Ordering of rational numbers is implemented using their float representations.
 
         >>> Rational(1, 2) > Rational(3, 4)
         False
@@ -180,7 +185,7 @@ class Rational:
             return
 
     def __neg__(self):
-        """ The negative of a Rational number
+        """The negative of a Rational number
 
         >>> -Rational(1, 2)
         -1/2
@@ -188,7 +193,7 @@ class Rational:
         return Rational(-self.numerator, self.denominator)
 
     def __float__(self):
-        """ The float representation is obtained by evaluating the fraction.
+        """The float representation is obtained by evaluating the fraction.
 
         >>> float(Rational(1, 2))
         0.5
@@ -196,7 +201,7 @@ class Rational:
         return self.numerator / self.denominator
 
     def __abs__(self):
-        """ Only the numerator is an unsigned int, so we take the absolute value of that.
+        """Only the numerator is an unsigned int, so we take the absolute value of that.
 
         >>> abs(Rational(-1, 2))
         1/2
