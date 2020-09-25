@@ -1,3 +1,6 @@
+import math
+
+
 class Rational:
     """ Data structure representing a rational number.
 
@@ -12,13 +15,31 @@ class Rational:
         self.numerator = numerator
         self.denominator = denominator
 
-    def __neg__(self):
-        """ The negative of a Rational number
+    @property
+    def is_zero(self):
+        return self.numerator == 0
 
-        >>> -Rational(1, 2)
-        -1/2
-        """
-        return Rational(-self.numerator, self.denominator)
+    @property
+    def is_negative(self):
+        return self.numerator < 0
+
+    @property
+    def inverse(self):
+        if self.is_zero:
+            raise ZeroDivisionError
+        elif self.is_negative:
+            return Rational(-self.denominator, abs(self.numerator))
+        else:
+            return Rational(self.denominator, self.numerator)
+
+    @property
+    def is_reduced(self):
+        gcd = math.gcd(self.numerator, self.denominator)
+        return gcd == 1
+
+    @property
+    def reduced_form(self):
+        return simplify(self)
 
     def __add__(self, other):
         """ Addition has the following properties:
@@ -82,6 +103,48 @@ class Rational:
     def __rmul__(self, other):
         return self * other
 
+    def __truediv__(self, other):
+        """ Division has the following properties:
+        - Rational / (non-zero) Rational -> Rational
+        - Rational / (non-zero) int -> Rational
+        - Rational / (non-zero) float -> float
+        - Rational / zero -> ZeroDivisionError
+
+        >>> Rational(1, 2) / Rational(3, 4)
+        4/6
+        >>> Rational(1, 2) / 3
+        1/6
+        """
+        if isinstance(other, Rational):
+            if other.is_zero:
+                raise ZeroDivisionError
+            elif other.is_negative:
+                return -self / abs(other)
+            else:
+                return Rational(self.numerator * other.denominator, self.denominator * other.numerator)
+        elif isinstance(other, int):
+            if other == 0:
+                raise ZeroDivisionError
+            elif other < 0:
+                return -self / abs(other)
+            else:
+                return Rational(self.numerator, self.denominator * other)
+        else:
+            return float(self) / other
+
+    def __pow__(self, power, modulo=None):
+        """
+        For integer powers, raise the numerator and denominator to the same power,
+        else revert to __pow__() applied to the float representation.
+
+        >>> Rational(2, 3) ** 3
+        8/27
+        """
+        if isinstance(power, int) and modulo is None:
+            return Rational(self.numerator ** power, self.denominator ** power)
+        else:
+            return pow(float(self), power, modulo)
+
     def __eq__(self, other):
         """ Two rational numbers are considered equal if they have the same numerator and denominator.
 
@@ -116,6 +179,14 @@ class Rational:
         else:
             return
 
+    def __neg__(self):
+        """ The negative of a Rational number
+
+        >>> -Rational(1, 2)
+        -1/2
+        """
+        return Rational(-self.numerator, self.denominator)
+
     def __float__(self):
         """ The float representation is obtained by evaluating the fraction.
 
@@ -134,3 +205,12 @@ class Rational:
 
     def __repr__(self):
         return "{}/{}".format(self.numerator, self.denominator)
+
+
+def simplify(x: Rational) -> Rational:
+    """ Reduce rational number to its simplest terms """
+    if x.is_zero:
+        return Rational(0, 1)
+    else:
+        gcd = math.gcd(x.numerator, x.denominator)
+        return Rational(x.numerator // gcd, x.denominator // gcd)
