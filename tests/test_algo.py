@@ -2,7 +2,7 @@ import math
 
 from farey.algo import find_rational_approximation
 from farey.data import Rational
-from farey.tests import assert_almost_equal
+from tests import assert_almost_equal
 
 
 def test_rational_approximation_of_irrational():
