@@ -65,7 +65,9 @@ class Rational:
         elif isinstance(other, float):
             return other + float(self)
         else:
-            return
+            raise TypeError(
+                "must be int, float or Rational, not %s" % type(other).__name__
+            )
 
     def __radd__(self, other):
         return self + other
@@ -98,7 +100,9 @@ class Rational:
         elif isinstance(other, float):
             return float(self) * other
         else:
-            return
+            raise TypeError(
+                "must be int, float or Rational, not %s" % type(other).__name__
+            )
 
     def __rmul__(self, other):
         return self * other
@@ -171,7 +175,9 @@ class Rational:
         if isinstance(other, (Rational, int, float)):
             return float(self) < float(other)
         else:
-            return
+            raise TypeError(
+                "must be int, float or Rational, not %s" % type(other).__name__
+            )
 
     def __gt__(self, other):
         """Ordering of rational numbers is implemented using their float representations.
@@ -182,7 +188,9 @@ class Rational:
         if isinstance(other, (Rational, int, float)):
             return float(self) > float(other)
         else:
-            return
+            raise TypeError(
+                "must be int, float or Rational, not %s" % type(other).__name__
+            )
 
     def __neg__(self):
         """The negative of a Rational number
