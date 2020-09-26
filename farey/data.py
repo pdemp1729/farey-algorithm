@@ -148,7 +148,18 @@ class Rational:
         8/27
         """
         if isinstance(power, int) and modulo is None:
-            return Rational(self.numerator ** power, self.denominator ** power)
+            if power > 0:
+                return Rational(self.numerator ** power, self.denominator ** power)
+            elif power < 0:
+                if self.is_zero:
+                    raise ZeroDivisionError
+                else:
+                    return Rational(
+                        self.denominator ** abs(power), self.numerator ** abs(power)
+                    )
+            else:
+                # convention that 0 ** 0 = 1 in python
+                return Rational(1, 1)
         else:
             return pow(float(self), power, modulo)
 
