@@ -1,8 +1,21 @@
 # farey-algorithm
 An implementation of the Farey algorithm for approximating real numbers by rationals.
 
-To use, simply do:
+## Usage
+
+To import the module, simply do
 ```
 import farey
-farey.find_rational_approximation(1.2474638299283746, places=5)
+```
+
+To find the nearest rational approximation accurate to a certain number of decimal places,
+use the `places` kwarg:
+```
+farey.find_rational_approximation(math.sqrt(2), method="farey", places=5)
+```
+
+To find the nearest rational approximation with denominator no larger than some cutoff, use
+the `max_denominator` kwarg:
+```
+farey.find_rational_approximation(math.sqrt(2), method="farey", max_denominator=1000)
 ```
