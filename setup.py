@@ -18,7 +18,7 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     license="MIT",
-    packages=find_packages(exclude=("tests",)),
+    packages=find_packages(exclude=("*.tests",)),
     python_requires=">=3.5",
     extras_require={"test": ["black", "flake8", "pytest", "pytest-cov"]},
     zip_safe=False,
