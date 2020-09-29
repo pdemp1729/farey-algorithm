@@ -20,6 +20,10 @@ setup(
     license="MIT",
     packages=find_packages(exclude=("*.tests",)),
     python_requires=">=3.5",
-    extras_require={"test": ["black", "flake8", "pytest", "pytest-cov"]},
+    extras_require={
+        "formatting": ["black", "flake8"],
+        "testing": ["pytest"],
+        "coverage": ["pytest-cov"],
+    },
     zip_safe=False,
 )
