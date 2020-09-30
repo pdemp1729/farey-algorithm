@@ -3,6 +3,8 @@ import math
 from farey.data import Rational
 from farey.utils import almost_equal
 
+ALLOWED_METHODS = ["farey"]
+
 
 def farey_add(x: Rational, y: Rational) -> Rational:
     """ Find the mediant of two rational numbers, as a rational number. """
@@ -33,8 +35,9 @@ def find_rational_approximation(x, method="farey", places=None, max_denominator=
         if places is None and max_denominator is not None:
             return _farey_algorithm_denominator(x, max_denominator)
         else:
-            print("Must specify one of decimal places or maximum denominator")
-            return None
+            raise ValueError("must specify one of places or max_denominator")
+    else:
+        raise ValueError("method should be one of %s" % ALLOWED_METHODS)
 
 
 def _farey_algorithm_accuracy(x, places=7):
