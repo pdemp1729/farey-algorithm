@@ -227,6 +227,16 @@ class Rational:
         """
         return Rational(abs(self.numerator), self.denominator)
 
+    def __floor__(self):
+        """For use with math.floor function."""
+        return self.numerator // self.denominator
+
+    def __ceil__(self):
+        """For use with math.ceil function."""
+        return self.numerator // self.denominator + (
+            self.numerator % self.denominator > 0
+        )
+
     def __repr__(self):
         return "{}/{}".format(self.numerator, self.denominator)
 
