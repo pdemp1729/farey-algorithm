@@ -2,7 +2,12 @@ import math
 
 from pytest import raises
 
-from farey.data import Rational, SimpleContinuedFraction
+from farey.data import (
+    convergent,
+    Rational,
+    SimpleContinuedFraction,
+    truncated_continued_fraction,
+)
 
 # -------------------------------------------
 # Rational
@@ -215,3 +220,18 @@ def test_scf_float():
 
     z = SimpleContinuedFraction(1, 3, 5)  # 1 + 1 / (3 + 1 / 5) = 21/16
     assert float(z) == 1.3125
+
+
+# -------------------------------------------
+# Convergent
+# -------------------------------------------
+
+
+def test_convergent():
+    x = math.sqrt(2)  # [1; 2, 2, 2, ...]
+    assert truncated_continued_fraction(x, 3) == SimpleContinuedFraction(1, 2, 2, 2)
+    assert convergent(x, 3) == SimpleContinuedFraction(1, 2, 2, 2).as_rational
+
+    x = 0.5  # [0; 2]
+    assert truncated_continued_fraction(x, 3) == SimpleContinuedFraction(0, 2)
+    assert convergent(x, 3) == SimpleContinuedFraction(0, 2).as_rational

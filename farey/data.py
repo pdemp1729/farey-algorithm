@@ -342,3 +342,30 @@ class SimpleContinuedFraction:
         first = self._list_representation[0]
         others = [str(x) for x in self._list_representation[1:]]
         return f"[{first}; {', '.join(others)}]"
+
+
+def truncated_continued_fraction(x: float, n: int) -> SimpleContinuedFraction:
+    """Truncate the continued fraction representation of x at the (n+1)'th term."""
+    list_repr = []
+    while len(list_repr) <= n:
+        int_part = math.floor(x)
+        list_repr.append(int_part)
+        try:
+            x = 1 / (x - int_part)
+        except ZeroDivisionError:
+            break
+    return SimpleContinuedFraction(*list_repr)
+
+
+def convergent(x: float, n: int) -> Rational:
+    """Calculate the n'th convergent of the number x.
+
+    The n'th convergent of x is obtained by truncating the continued fraction expansion
+    of x at the (n+1)'th term and calculating its rational representation. This is guaranteed
+    to be in lowest terms.
+
+    The even convergents are underestimates of x, while the odd convergents are overestimates,
+    which get closer to x as n is increased.
+    """
+    continued_frac = truncated_continued_fraction(x, n)
+    return continued_frac.as_rational
