@@ -1,16 +1,18 @@
+import math
+
 from pytest import raises
 
 from farey.data import Rational
 
 
-def test_zero():
+def test_rational_zero():
     x = Rational(0, 1)
     assert x.is_zero
     with raises(ZeroDivisionError):
         _ = x.inverse
 
 
-def test_addition():
+def test_rational_addition():
     x = Rational(1, 2)  # 1/2
     y = Rational(3, 5)  # 3/5
 
@@ -26,13 +28,13 @@ def test_addition():
     assert str(excinfo.value) == "must be int, float or Rational, not str"
 
 
-def test_subtraction():
+def test_rational_subtraction():
     x = Rational(1, 2)  # 1/2
     y = Rational(3, 5)  # 3/5
     assert x - y == Rational(-1, 10)
 
 
-def test_multiplication():
+def test_rational_multiplication():
     x = Rational(1, 2)
     y = Rational(3, 5)
 
@@ -48,7 +50,7 @@ def test_multiplication():
     assert str(excinfo.value) == "must be int, float or Rational, not str"
 
 
-def test_division():
+def test_rational_division():
     x = Rational(1, 2)
     y = Rational(3, 5)
     z = Rational(-4, 7)
@@ -69,7 +71,7 @@ def test_division():
     assert y / 1.2 == 0.5
 
 
-def test_power():
+def test_rational_power():
     x = Rational(2, 3)
     # Rational ** int -> Rational
     assert x ** 3 == Rational(8, 27)
@@ -83,7 +85,7 @@ def test_power():
     assert Rational(0, 1) ** 0 == Rational(1, 1)
 
 
-def test_comparison():
+def test_rational_comparison():
     x = Rational(1, 2)
     y = Rational(2, 3)
 
@@ -99,19 +101,37 @@ def test_comparison():
     assert str(excinfo.value) == "must be int, float or Rational, not str"
 
 
-def test_negative():
+def test_rational_negative():
     x = Rational(1, 2)
     neg_x = -x
     assert neg_x == Rational(-1, 2)
     assert neg_x.is_negative
 
 
-def test_float():
+def test_rational_float():
     x = Rational(1, 2)
     assert float(x) == 0.5
 
 
-def test_inverse():
+def test_rational_floor():
+    x = Rational(5, 2)
+    y = Rational(-1, 2)
+    z = Rational(1, 1)
+    assert math.floor(x) == 2
+    assert math.floor(y) == -1
+    assert math.floor(z) == 1
+
+
+def test_rational_ceil():
+    x = Rational(5, 2)
+    y = Rational(-1, 2)
+    z = Rational(1, 1)
+    assert math.ceil(x) == 3
+    assert math.ceil(y) == 0
+    assert math.ceil(z) == 1
+
+
+def test_rational_inverse():
     x = Rational(1, 3)
     assert x.inverse == Rational(3, 1)
 
@@ -119,12 +139,12 @@ def test_inverse():
     assert x.inverse == Rational(-5, 2)
 
 
-def test_repr():
+def test_rational_repr():
     x = Rational(1, 2)
     assert repr(x) == "1/2"
 
 
-def test_reduction():
+def test_rational_reduction():
     x = Rational(1, 3)
     y = Rational(2, 6)
     z = Rational(0, 3)
