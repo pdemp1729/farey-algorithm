@@ -1,5 +1,7 @@
 import math
 
+from pytest import raises
+
 from farey.algo import find_rational_approximation
 from farey.data import Rational
 from farey.tests import assert_almost_equal
@@ -7,8 +9,13 @@ from farey.tests import assert_almost_equal
 
 def test_input():
     x = 0.5
-    r = find_rational_approximation(x, method="farey")
-    assert r is None
+    with raises(ValueError) as excinfo:
+        _ = find_rational_approximation(x, method="farey")
+    assert str(excinfo.value) == "must specify one of places or max_denominator"
+
+    with raises(ValueError) as excinfo:
+        _ = find_rational_approximation(x, method="my own")
+    assert str(excinfo.value) == "method should be one of ['farey']"
 
 
 def test_rational_approximation_of_irrational():
