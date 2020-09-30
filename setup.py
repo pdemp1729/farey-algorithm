@@ -19,7 +19,7 @@ setup(
     ],
     license="MIT",
     packages=find_packages(exclude=("*.tests",)),
-    python_requires=">=3.5",
+    python_requires=">=3.6",
     extras_require={
         "formatting": ["black", "flake8"],
         "testing": ["pytest"],
