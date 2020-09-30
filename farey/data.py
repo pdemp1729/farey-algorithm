@@ -248,3 +248,97 @@ def simplify(x: Rational) -> Rational:
     else:
         gcd = math.gcd(x.numerator, x.denominator)
         return Rational(x.numerator // gcd, x.denominator // gcd)
+
+
+class SimpleContinuedFraction:
+    """Data structure representing a finite simple continued fraction.
+
+    A finite simple continued fraction is an expression of the form
+    a_0 + 1 / (a_1 + 1 / (... + 1 / a_n)),
+    where the a_i are integers, and all a_i except for a_0 are positive,
+    cf. https://en.wikipedia.org/wiki/Continued_fraction.
+
+    >>> SimpleContinuedFraction(1, 2, 3)
+    [1; 2, 3]
+    """
+
+    def __init__(self, *args):
+        assert len(args) > 0, "must provide at least one argument"
+        self._list_representation = list(args)
+
+    @property
+    def has_leading_zero(self):
+        return self[0] == 0
+
+    @property
+    def is_zero(self):
+        return len(self) == 1 and self.has_leading_zero
+
+    @property
+    def inverse(self):
+        if self.is_zero:
+            raise ZeroDivisionError
+        elif self.has_leading_zero:
+            return self[1:]
+        else:
+            return SimpleContinuedFraction(0, *self)
+
+    @property
+    def as_rational(self) -> Rational:
+        if len(self) == 1:
+            return Rational(self[0], 1)
+        elif len(self) == 2:
+            return self[0] + Rational(1, self[1])
+        else:
+            return self[0] + self[1:].as_rational.inverse
+
+    @classmethod
+    def from_rational(cls, r: Rational) -> "SimpleContinuedFraction":
+        list_repr = []
+        while True:
+            int_part = math.floor(r)
+            list_repr.append(int_part)
+            try:
+                r = (r - int_part).inverse
+            except ZeroDivisionError:
+                break
+        return cls(*list_repr)
+
+    def __eq__(self, other):
+        if not isinstance(other, SimpleContinuedFraction):
+            return False
+        return self._list_representation == other._list_representation
+
+    def __iter__(self):
+        return self._list_representation.__iter__()
+
+    def __getitem__(self, item):
+        """Slicing returns another SimpleContinuedFraction, whereas integer indexing returns an int.
+
+        >>> SimpleContinuedFraction(1, 2, 3)[0]
+        1
+        >>> SimpleContinuedFraction(1, 2, 3)[1:]
+        [2; 3]
+        """
+        list_repr = self._list_representation.__getitem__(item)
+        if isinstance(item, slice):
+            return SimpleContinuedFraction(*list_repr)
+        else:
+            return list_repr
+
+    def __len__(self):
+        return len(self._list_representation)
+
+    def __float__(self):
+        """The float representation is obtained by evaluating the continued fraction."""
+        if len(self) == 1:
+            return float(self[0])
+        elif len(self) == 2:
+            return self[0] + 1 / float(self[1])
+        else:
+            return self[0] + 1 / float(self[1:])
+
+    def __repr__(self):
+        first = self._list_representation[0]
+        others = [str(x) for x in self._list_representation[1:]]
+        return f"[{first}; {', '.join(others)}]"

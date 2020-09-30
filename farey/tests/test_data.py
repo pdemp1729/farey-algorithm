@@ -2,7 +2,11 @@ import math
 
 from pytest import raises
 
-from farey.data import Rational
+from farey.data import Rational, SimpleContinuedFraction
+
+# -------------------------------------------
+# Rational
+# -------------------------------------------
 
 
 def test_rational_zero():
@@ -156,3 +160,58 @@ def test_rational_reduction():
     assert not z.is_reduced
     assert y.reduced_form == x
     assert z.reduced_form == Rational(0, 1)
+
+
+# -------------------------------------------
+# SimpleContinuedFraction
+# -------------------------------------------
+
+
+def test_scf_repr():
+    x = SimpleContinuedFraction(1, 2, 3)
+    assert repr(x) == "[1; 2, 3]"
+
+
+def test_scf_zero():
+    x = SimpleContinuedFraction(0)
+    assert x.is_zero
+    with raises(ZeroDivisionError):
+        _ = x.inverse
+
+
+def test_scf_inverse():
+    x = SimpleContinuedFraction(0, 1, 2)  # 0 + 1 / (1 + 1 / 2) = 2/3
+    y = SimpleContinuedFraction(1, 2)  # 1 + 1 / 2 = 3/2
+    assert x.inverse == y
+    assert y.inverse == x
+
+
+def test_scf_as_rational():
+    x = SimpleContinuedFraction(1, 2, 3)  # 1 + 1 / (2 + 1 / 3) = 10/7
+    assert x.as_rational == Rational(10, 7)
+
+    y = SimpleContinuedFraction(2)  # 2
+    assert y.as_rational == Rational(2, 1)
+
+
+def test_scf_from_rational():
+    r = Rational(10, 7)
+    result = SimpleContinuedFraction.from_rational(r)
+    assert result == SimpleContinuedFraction(1, 2, 3)
+
+    r = Rational(-19, 5)
+    result = SimpleContinuedFraction.from_rational(r)
+    assert result == SimpleContinuedFraction(-4, 5)
+    # check that Rational and SimpleContinuedFraction objects not equal
+    assert result != r
+
+
+def test_scf_float():
+    x = SimpleContinuedFraction(2)
+    assert float(x) == 2.0
+
+    y = SimpleContinuedFraction(1, 2)  # 1 + 1 / 2 = 3/2
+    assert float(y) == 1.5
+
+    z = SimpleContinuedFraction(1, 3, 5)  # 1 + 1 / (3 + 1 / 5) = 21/16
+    assert float(z) == 1.3125
