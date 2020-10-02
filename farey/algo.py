@@ -1,9 +1,9 @@
 import math
 
-from farey.data import Rational
+from farey.data import truncated_continued_fraction, Rational, SimpleContinuedFraction
 from farey.utils import almost_equal
 
-ALLOWED_METHODS = ["farey"]
+ALLOWED_METHODS = ["farey", "continued_fraction"]
 
 
 def farey_add(x: Rational, y: Rational) -> Rational:
@@ -36,6 +36,11 @@ def find_rational_approximation(x, method="farey", places=None, max_denominator=
             return _farey_algorithm_denominator(x, max_denominator)
         else:
             raise ValueError("must specify one of places or max_denominator")
+    elif method == "continued_fraction":
+        if max_denominator is not None:
+            return _continued_fraction_algorithm_denominator(x, max_denominator)
+        else:
+            raise ValueError("must specify max_denominator")
     else:
         raise ValueError("method should be one of %s" % ALLOWED_METHODS)
 
@@ -107,3 +112,64 @@ def _farey_algorithm_denominator(x, max_denominator=1000):
             return mediant
 
     return min([left, right], key=lambda r: abs(x - r))
+
+
+def _continued_fraction_algorithm_denominator(x, max_denominator=1000):
+    """Find a rational approximation of x with denominator no larger than that specified.
+
+    We use an algorithm based on truncating the continued fraction representation of a number,
+    and reducing its final value until reaching a suitable rational representation,
+    cf. https://en.wikipedia.org/wiki/Continued_fraction#Best_rational_approximations.
+    """
+    n = 0
+    prev_denominator = 0  # k_{-1} = 0
+    current_convergent = Rational(math.floor(x), 1)
+
+    while True:
+        next_truncation = truncated_continued_fraction(x, n + 1)
+        next_convergent = next_truncation.as_rational
+        if next_convergent == current_convergent:
+            # reached the end of finite continued fraction
+            return current_convergent
+        if next_convergent.denominator > max_denominator:
+            # we've gone too far so need to find potential convergents by reducing the last value
+            # of the continued fraction, without going past half of a_{n+1}.
+            # The smallest we can make the denominator in this way is given by
+            # math.ceil(a_{n+1} / 2) * k_n + k_{n-1}
+            a_n_plus_one = next_truncation.last_value
+            smallest_denominator = (
+                math.ceil(a_n_plus_one / 2) * current_convergent.denominator
+                + prev_denominator
+            )
+            if smallest_denominator > max_denominator:
+                # we can't get better than the approximation we already have
+                return current_convergent
+            else:
+                # there is some i for which the reduced denominator is less than max_denominator
+                # k'_{n+1} = (a_{n+1} - i) * k_n + k_{n-1} < max_denominator
+                # The smallest such i is math.ceil((k_{n+1} - max_denominator) / k_n)
+                optimal_reduction_factor = math.ceil(
+                    (next_convergent.denominator - max_denominator)
+                    / current_convergent.denominator
+                )
+                next_truncation = next_truncation.replace_last_value(
+                    a_n_plus_one - optimal_reduction_factor
+                )
+                next_convergent = next_truncation.as_rational
+                # if a_{n+1} is even and i == a_{n+1} / 2, we need to check the errors
+                if (
+                    a_n_plus_one % 2 == 0
+                    and optimal_reduction_factor == a_n_plus_one / 2
+                ):
+                    current_error = abs(x - current_convergent)
+                    next_error = abs(x - next_convergent)
+                    if next_error < current_error:
+                        return next_convergent
+                    else:
+                        return current_convergent
+                else:
+                    return next_convergent
+        else:
+            n += 1
+            prev_denominator = current_convergent.denominator
+            current_convergent = next_convergent

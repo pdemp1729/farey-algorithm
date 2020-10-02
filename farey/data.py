@@ -275,6 +275,10 @@ class SimpleContinuedFraction:
         return len(self) == 1 and self.has_leading_zero
 
     @property
+    def last_value(self):
+        return self._list_representation[-1]
+
+    @property
     def inverse(self):
         if self.is_zero:
             raise ZeroDivisionError
@@ -291,6 +295,11 @@ class SimpleContinuedFraction:
             return self[0] + Rational(1, self[1])
         else:
             return self[0] + self[1:].as_rational.inverse
+
+    def replace_last_value(self, value: int):
+        """This method is used for rational approximation."""
+        list_repr = self._list_representation[:-1] + [value]
+        return SimpleContinuedFraction(*list_repr)
 
     @classmethod
     def from_rational(cls, r: Rational) -> "SimpleContinuedFraction":
