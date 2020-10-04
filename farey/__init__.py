@@ -1,1 +1,1 @@
-from farey.algo import find_rational_approximation
+from farey.algo import best_rational_approximation

@@ -11,7 +11,7 @@ def farey_add(x: Rational, y: Rational) -> Rational:
     return Rational(x.numerator + y.numerator, x.denominator + y.denominator)
 
 
-def find_rational_approximation(x, method="farey", places=None, max_denominator=None):
+def best_rational_approximation(x, method="farey", places=None, max_denominator=None):
     """Find a rational approximation of x to the specified number of decimal places.
 
     We use an algorithm based on the Farey sequence, which consists of all completely
@@ -21,13 +21,13 @@ def find_rational_approximation(x, method="farey", places=None, max_denominator=
     if x == 0:
         return Rational(0, 1)
     elif x < 0:
-        return -find_rational_approximation(-x, method, places, max_denominator)
+        return -best_rational_approximation(-x, method, places, max_denominator)
     elif x >= 1:
-        return int(x // 1) + find_rational_approximation(
+        return int(x // 1) + best_rational_approximation(
             x % 1, method, places, max_denominator
         )
     elif 0.5 < x < 1:
-        return 1 - find_rational_approximation(1 - x, method, places, max_denominator)
+        return 1 - best_rational_approximation(1 - x, method, places, max_denominator)
 
     if method == "farey":
         if places is not None and max_denominator is None:
