@@ -37,10 +37,12 @@ def find_rational_approximation(x, method="farey", places=None, max_denominator=
         else:
             raise ValueError("must specify one of places or max_denominator")
     elif method == "continued_fraction":
-        if max_denominator is not None:
+        if places is not None and max_denominator is None:
+            return _continued_fraction_algorithm_accuracy(x, places)
+        elif places is None and max_denominator is not None:
             return _continued_fraction_algorithm_denominator(x, max_denominator)
         else:
-            raise ValueError("must specify max_denominator")
+            raise ValueError("must specify one of places or max_denominator")
     else:
         raise ValueError("method should be one of %s" % ALLOWED_METHODS)
 
@@ -172,4 +174,36 @@ def _continued_fraction_algorithm_denominator(x, max_denominator=1000):
         else:
             n += 1
             prev_denominator = current_convergent.denominator
+            current_convergent = next_convergent
+
+
+def _continued_fraction_algorithm_accuracy(x, places=7):
+    epsilon = 0.5 * 10 ** -places
+    n = 0
+    current_convergent = Rational(math.floor(x), 1)
+    if almost_equal(x, current_convergent, places=places):
+        return current_convergent
+
+    while True:
+        next_truncation = truncated_continued_fraction(x, n + 1)
+        next_convergent = next_truncation.as_rational
+        if almost_equal(x, next_convergent, places=places):
+            # we're within the allowed bound, but may be able to find a convergent
+            # with smaller denominator also within the bound by reducing the last
+            # value of the continued fraction.
+            bound = x + (1 if n % 2 == 0 else -1) * epsilon
+            optimal_reduction_factor = math.floor(
+                (next_convergent.numerator - next_convergent.denominator * bound)
+                / (
+                    current_convergent.numerator
+                    - current_convergent.denominator * bound
+                )
+            )
+            a_n_plus_one = next_truncation.last_value
+            next_truncation = next_truncation.replace_last_value(
+                a_n_plus_one - optimal_reduction_factor
+            )
+            return next_truncation.as_rational
+        else:
+            n += 1
             current_convergent = next_convergent
