@@ -11,13 +11,13 @@ import farey
 To find the nearest rational approximation accurate to a certain number of decimal places,
 use the `places` kwarg:
 ```
-farey.find_rational_approximation(math.sqrt(2), method="farey", places=5)
+farey.best_rational_approximation(math.sqrt(2), method="farey", places=5)
 ```
 
 To find the nearest rational approximation with denominator no larger than some cutoff, use
 the `max_denominator` kwarg:
 ```
-farey.find_rational_approximation(math.sqrt(2), method="farey", max_denominator=1000)
+farey.best_rational_approximation(math.sqrt(2), method="farey", max_denominator=1000)
 ```
 
 The available methods are `"farey"` and `"continued_fraction"`.
