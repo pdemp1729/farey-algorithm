@@ -1,5 +1,5 @@
 # farey-algorithm
-An implementation of the Farey algorithm for approximating real numbers by rationals.
+An implementation of various algorithms for approximating real numbers by rationals.
 
 ## Usage
 
@@ -19,3 +19,5 @@ the `max_denominator` kwarg:
 ```
 farey.find_rational_approximation(math.sqrt(2), method="farey", max_denominator=1000)
 ```
+
+The available methods are `"farey"` and `"continued_fraction"`.
