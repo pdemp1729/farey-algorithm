@@ -1,4 +1,4 @@
-from farey.utils import almost_equal
+from rationals.utils import almost_equal
 
 
 def assert_almost_equal(a, b, places=7, message=None):

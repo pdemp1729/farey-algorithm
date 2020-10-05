@@ -2,7 +2,7 @@ import math
 
 from pytest import raises
 
-from farey.data import (
+from rationals.data import (
     convergent,
     Rational,
     SimpleContinuedFraction,

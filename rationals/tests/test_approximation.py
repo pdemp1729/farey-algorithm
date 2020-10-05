@@ -2,9 +2,9 @@ import math
 
 from pytest import raises
 
-from farey.algo import ALLOWED_METHODS, best_rational_approximation
-from farey.data import Rational
-from farey.tests import assert_almost_equal
+from rationals.approximation import ALLOWED_METHODS, best_rational_approximation
+from rationals.data import Rational
+from rationals.tests import assert_almost_equal
 
 
 def test_input():
