@@ -5,19 +5,23 @@ An implementation of various algorithms for approximating real numbers by ration
 
 To import the module, simply do
 ```
-import farey
+import rationals
 ```
 
 To find the nearest rational approximation accurate to a certain number of decimal places,
 use the `places` kwarg:
 ```
-farey.best_rational_approximation(math.sqrt(2), method="farey", places=5)
+rationals.best_rational_approximation(
+    math.sqrt(2), method="farey", places=5,
+)
 ```
 
 To find the nearest rational approximation with denominator no larger than some cutoff, use
 the `max_denominator` kwarg:
 ```
-farey.best_rational_approximation(math.sqrt(2), method="farey", max_denominator=1000)
+rationals.best_rational_approximation(
+    math.sqrt(2), method="farey", max_denominator=1000,
+)
 ```
 
 The available methods are `"farey"` and `"continued_fraction"`.
