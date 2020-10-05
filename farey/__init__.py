@@ -1,1 +1,0 @@
-from farey.algo import best_rational_approximation

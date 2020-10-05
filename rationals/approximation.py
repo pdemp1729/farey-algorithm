@@ -1,7 +1,7 @@
 import math
 
-from farey.data import truncated_continued_fraction, Rational, SimpleContinuedFraction
-from farey.utils import almost_equal
+from rationals.data import truncated_continued_fraction, Rational
+from rationals.utils import almost_equal
 
 ALLOWED_METHODS = ["farey", "continued_fraction"]
 
